@@ -3,8 +3,31 @@ import homeLogo from "../../Assets/home-main.svg";
 import Particle from "../../components/Particle";
 import Home2 from "./Home2";
 import Type from "./Type";
+import { Firestore, doc, getDoc } from "firebase/firestore";
+import { useEffect, useState } from "react";
 
-function Home() {
+interface IHomeProps {
+  db: Firestore | null;
+}
+
+function Home({ db }: IHomeProps) {
+  const [greetings, setGreetings] = useState("");
+  const [iAm, setIAm] = useState("");
+  const [name, setName] = useState("");
+
+  useEffect(() => {
+    async function init() {
+      const docRef = doc(db!, "portfolio", "home");
+      const docSnap = await getDoc(docRef);
+      setGreetings(docSnap.data()!.greeting);
+      setIAm(docSnap.data()!["i-am"]);
+      setName(docSnap.data()!.name);
+    }
+    if (db) {
+      init();
+    }
+  }, [db]);
+
   return (
     <section>
       <Container fluid className="home-section" id="home">
@@ -13,15 +36,15 @@ function Home() {
           <Row>
             <Col md={7} className="home-header">
               <h1 style={{ paddingBottom: 15 }} className="heading">
-                Hi There!{" "}
+                {greetings}{" "}
                 <span className="wave" role="img" aria-labelledby="wave">
                   👋🏻
                 </span>
               </h1>
 
               <h1 className="heading-name">
-                I'M
-                <strong className="main-name"> SOUMYAJIT BEHERA</strong>
+                {iAm}
+                <strong className="main-name"> {name}</strong>
               </h1>
 
               <div style={{ padding: 50, textAlign: "left" }}>
