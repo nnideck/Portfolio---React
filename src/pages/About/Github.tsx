@@ -11,7 +11,6 @@ function Github() {
         username="soumyajit4419"
         blockSize={15}
         blockMargin={5}
-        color="#c084f5"
         fontSize={16}
       />
     </Row>

@@ -741,3 +741,21 @@ button:focus {
 .fork-btn-inner::after {
   display: none !important;
 }
+
+.login-content  {
+  .login_label {
+    color: #a588c0;
+  }
+  h2 {
+    color: #a588c0;
+  }
+}
+
+.dashboard-content {
+  .login_label {
+    color: #a588c0;
+  }
+  h2 {
+    color: #a588c0;
+  }
+}
