@@ -12,9 +12,7 @@ import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import ScrollToTop from "./components/ScrollToTop";
 import "./style.css";
-import { initializeApp } from "firebase/app";
-import { Firestore, getFirestore } from "firebase/firestore";
-import { firebaseConfig } from "./Utils/firebase-config";
+import { ExportsContexts } from "./Contexts/exportsContext";
 
 const About = lazy(() => import("./pages/About/About"));
 const Home = lazy(() => import("./pages/Home/Home"));
@@ -26,14 +24,6 @@ const Login = lazy(() => import("./pages/Login/Login"));
 function App() {
   const [load, upadateLoad] = useState(true);
 
-  const [db, setDb] = useState<Firestore | null>(null);
-
-  useEffect(() => {
-    const app = initializeApp(firebaseConfig);
-    const _db = getFirestore(app);
-    setDb(_db);
-  }, []);
-
   useEffect(() => {
     const timer = setTimeout(() => {
       upadateLoad(false);
@@ -43,6 +33,7 @@ function App() {
   }, []);
 
   return (
+    <ExportsContexts>
     <Router>
       <Preloader load={load} />
       <div className="App" id={load ? "no-scroll" : "scroll"}>
@@ -53,7 +44,7 @@ function App() {
             path="/"
             element={
               <Suspense fallback={<Preloader load={true} />}>
-                <Home db={db} />
+                <Home />
               </Suspense>
             }
           />
@@ -102,6 +93,7 @@ function App() {
         <Footer />
       </div>
     </Router>
+    </ExportsContexts>
   );
 }
 

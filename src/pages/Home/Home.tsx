@@ -3,30 +3,19 @@ import homeLogo from "../../Assets/home-main.svg";
 import Particle from "../../components/Particle";
 import Home2 from "./Home2";
 import Type from "./Type";
-import { Firestore, doc, getDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { usePortfolioContext } from "../../../src/Contexts/portfolioContext"
 
-interface IHomeProps {
-  db: Firestore | null;
-}
 
-function Home({ db }: IHomeProps) {
-  const [greetings, setGreetings] = useState("");
-  const [iAm, setIAm] = useState("");
-  const [name, setName] = useState("");
+interface IHomeProps {}
+
+// eslint-disable-next-line no-empty-pattern
+function Home({}: IHomeProps) {
+  const { greeting, presentation, name, loadValues } = usePortfolioContext();
 
   useEffect(() => {
-    async function init() {
-      const docRef = doc(db!, "portfolio", "home");
-      const docSnap = await getDoc(docRef);
-      setGreetings(docSnap.data()!.greeting);
-      setIAm(docSnap.data()!["i-am"]);
-      setName(docSnap.data()!.name);
-    }
-    if (db) {
-      init();
-    }
-  }, [db]);
+    loadValues();
+  }, []);
 
   return (
     <section>
@@ -36,14 +25,14 @@ function Home({ db }: IHomeProps) {
           <Row>
             <Col md={7} className="home-header">
               <h1 style={{ paddingBottom: 15 }} className="heading">
-                {greetings}{" "}
+                {greeting}{" "}
                 <span className="wave" role="img" aria-labelledby="wave">
                   👋🏻
                 </span>
               </h1>
 
               <h1 className="heading-name">
-                {iAm}
+                {presentation}
                 <strong className="main-name"> {name}</strong>
               </h1>
 

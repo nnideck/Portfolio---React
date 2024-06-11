@@ -1,28 +1,34 @@
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../../components/Sidebar";
+import {useForm} from "../../../Utils/Hooks/useForm";
+import { doc, setDoc } from "firebase/firestore";
+import { FirebaseContext } from "../../../Contexts/firebaseContext";
+import { usePortfolioContext } from "../../../Contexts/portfolioContext";
 
-const Dashboard = () => {
+interface IDashboardProps {}
+
+// eslint-disable-next-line no-empty-pattern
+const Dashboard = ({}: IDashboardProps) => {
+  //*Pq to pegando o db aqui?
+  const { db } = useContext(FirebaseContext);
   const navigate = useNavigate();
   const [auth, setAuth] = useState<any>(null);
+  const [validated, setValidated] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const { greeting, presentation, name, loadValues } = usePortfolioContext();
+
+  const [form, setForm, updateForm] = useForm({
+    greeting,
+    presentation,
+    name,
+  });
 
   function logout() {
     signOut(auth);
   }
-
-  const [greeting, setGreeting] = useState("");
-  const [name, setName] = useState("");
-  const [presentation, setPresentation] = useState("");
-
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
-    // Aqui você pode fazer o que quiser com os valores dos campos do formulário
-    console.log("Greeting:", greeting);
-    console.log("Name:", name);
-    console.log("Presentation:", presentation);
-  };
 
   useEffect(() => {
     const _auth = getAuth();
@@ -33,60 +39,103 @@ const Dashboard = () => {
         navigate("/login");
       }
     });
+    if (!greeting) {
+      loadValues();
+    }
   }, []);
+
+  useEffect(() => {
+    updateForm({
+      greeting,
+      presentation,
+      name,
+    });
+  }, [greeting]);
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    const _form = e.currentTarget;
+    if (_form.checkValidity() === false) {
+      e.preventDefault();
+      e.stopPropagation();
+    } else {
+      console.log("enviou");
+      setSaving(true);
+
+      await setDoc(doc(db!, "portfolio", "home"), {
+        greeting: form.greeting,
+        presentation: form.presentation,
+        name: form.name,
+      });
+      setTimeout(() => {
+        setSaving(false);
+        setValidated(false);
+      }, 2000);
+    }
+    setValidated(true);
+  };
 
   return (
     <Container>
       <Container className="dashboard-content">
         <Row className="justify-content-md-center">
-        <br />
-        <br />
-        <br />
+          <br />
+          <br />
+          <br />
           <Sidebar />
-          
+
           <Col md={7} className="dashboard-col"></Col>
-          
-          <Form onSubmit={handleSubmit}>
-            <Button variant="primary" type="button" onClick={logout}>
+          <Button variant="primary" type="button" onClick={logout}>
             Logout
           </Button>
-          <br />
-          <br />
+          <Form noValidate validated={validated} onSubmit={handleSubmit}>
+            <br />
+            <br />
             <Form.Group controlId="formGreeting">
-              <Form.Label className="login_label">Greeting</Form.Label>
+              <Form.Label className="greeting_label">Greeting</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter a greeting"
-                //*Pq aqui o onchange não vem antes? Se ele seta o valor do greeting..
-                value={greeting}
-                onChange={(e) => setGreeting(e.target.value)}
+                name="greeting"
+                value={form.greeting}
+                onChange={setForm}
+                required
+                disabled={saving}
               />
             </Form.Group>
             <br />
-    
+
             <Form.Group controlId="formPresentation">
-              <Form.Label className="login_label">Presentation</Form.Label>
+              <Form.Label className="presentation_label">
+                Presentation
+              </Form.Label>
               <Form.Control
-               type="text"
+                type="text"
                 placeholder="Enter a presentation"
-                value={presentation}
-                onChange={(e) => setPresentation(e.target.value)}
+                name="presentation"
+                value={form.presentation}
+                onChange={setForm}
+                required
+                disabled={saving}
               />
             </Form.Group>
-        
+
             <br />
             <Form.Group controlId="formName">
-              <Form.Label className="login_label">Name</Form.Label>
+              <Form.Label className="name_label">Name</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter a name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                name="name"
+                value={form.name}
+                onChange={setForm}
+                required
+                disabled={saving}
               />
             </Form.Group>
             <br />
-            <Button variant="primary" type="submit">
-              Submit
+            <Button variant="primary" type="submit" disabled={saving}>
+              {saving ? "Submiting..." : "Change content"}
             </Button>
             <br />
             <br />
