@@ -1,52 +1,32 @@
+
 import { useEffect, useState } from "react";
-import { Container, Form, Button, Row, Col, Alert } from "react-bootstrap";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+import { Container, Form, Button, Row, Col} from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "../../Contexts/authContext";
+
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const [auth, setAuth] = useState<any>(null);
-  const [_error, setError] = useState("");
+  const {user, login} = useAuthContext();
 
   useEffect(() => {
-    const _auth = getAuth();
-    setAuth(_auth);
-
-    onAuthStateChanged(_auth, (user) => {
-      if (user) {
+    if (user) {
         navigate("/dashboard");
       }
     });
-  }, []);
+   [user];
 
 
-  const handleLogin = (e: any) => {
+  const handleLogin = async (e: any) => {
     e.preventDefault();
     setLoading(true);
     console.log(`Email: ${email}, Password: ${password}`);
-    signInWithEmailAndPassword(auth, email, password) 
-    .then((userCredential) => {
-      const user = userCredential.user;
-      console.log("user", user);
-      navigate("/dashboard");
-    
-    })
-    .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log("errorCode", errorCode, "errorMessage", errorMessage);
-        setError("Usuário não localizado");
-      })
-      
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
-  
+    await login(email, password)
+    setLoading(false);
+    };
 
   return (
     <Container>
@@ -69,7 +49,7 @@ const Login = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  //* pq disabled {loading}?
+
                   disabled={loading}
                 />
               </Form.Group>
@@ -90,7 +70,6 @@ const Login = () => {
               <Button variant="primary" type="submit" disabled={loading}>
                 Login
               </Button>
-              <Alert variant="danger" hidden={_error == ""}>{_error}</Alert>
               <br />
               <br />
             </Form>

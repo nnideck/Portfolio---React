@@ -1,14 +1,15 @@
-
+import { AuthProvider } from "./authContext";
 import { FirebaseProvider } from "./firebaseContext";
-import {PortfolioProvider} from "./portfolioContext"
+import { PortfolioProvider } from "./portfolioContext";
 
 const ExportsContexts = ({ children }: any) => {
-    return (
+  return (
+    <AuthProvider>
       <FirebaseProvider>
         <PortfolioProvider>{children}</PortfolioProvider>
       </FirebaseProvider>
-    );
-  };
-  
-  export { ExportsContexts };
-  
+    </AuthProvider>
+  );
+};
+
+export { ExportsContexts };

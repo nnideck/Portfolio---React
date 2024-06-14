@@ -1,24 +1,18 @@
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+
 import Sidebar from "../../../components/Sidebar";
-import {useForm} from "../../../Utils/Hooks/useForm";
-import { doc, setDoc } from "firebase/firestore";
-import { FirebaseContext } from "../../../Contexts/firebaseContext";
+import { useForm } from "../../../Utils/Hooks/useForm";
 import { usePortfolioContext } from "../../../Contexts/portfolioContext";
+import { useAuthContext } from "../../../Contexts/authContext";
+import { useNavigate } from "react-router-dom";
 
-interface IDashboardProps {}
-
-// eslint-disable-next-line no-empty-pattern
-const Dashboard = ({}: IDashboardProps) => {
-  //*Pq to pegando o db aqui?
-  const { db } = useContext(FirebaseContext);
-  const navigate = useNavigate();
-  const [auth, setAuth] = useState<any>(null);
+const Dashboard = () => {
   const [validated, setValidated] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const { greeting, presentation, name, loadValues } = usePortfolioContext();
+  const { greeting, presentation, name, saving, loadValues, saveValues } =
+    usePortfolioContext();
+  const { logout, user } = useAuthContext();
+  const navigate = useNavigate();
 
   const [form, setForm, updateForm] = useForm({
     greeting,
@@ -26,23 +20,18 @@ const Dashboard = ({}: IDashboardProps) => {
     name,
   });
 
-  function logout() {
-    signOut(auth);
-  }
-
   useEffect(() => {
-    const _auth = getAuth();
-    setAuth(_auth);
-
-    onAuthStateChanged(_auth, (user) => {
-      if (!user) {
-        navigate("/login");
-      }
-    });
     if (!greeting) {
       loadValues();
     }
   }, []);
+
+  useEffect(() => {
+    if (!user) {
+        navigate("/login");
+      }
+    });
+   [user];
 
   useEffect(() => {
     updateForm({
@@ -60,17 +49,8 @@ const Dashboard = ({}: IDashboardProps) => {
       e.stopPropagation();
     } else {
       console.log("enviou");
-      setSaving(true);
-
-      await setDoc(doc(db!, "portfolio", "home"), {
-        greeting: form.greeting,
-        presentation: form.presentation,
-        name: form.name,
-      });
-      setTimeout(() => {
-        setSaving(false);
-        setValidated(false);
-      }, 2000);
+      await saveValues(form);
+      setValidated(false);
     }
     setValidated(true);
   };
@@ -145,5 +125,4 @@ const Dashboard = ({}: IDashboardProps) => {
     </Container>
   );
 };
-
 export default Dashboard;

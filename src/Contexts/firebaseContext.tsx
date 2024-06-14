@@ -13,7 +13,6 @@ const initialValue: IFirebaseContext = {
 
 const FirebaseContext = createContext(initialValue);
 
-//* pq essa função recebe uma children?
 const FirebaseProvider = ({children}: any) => {
     const [db, setDb] = useState<Firestore | null>(null);
 

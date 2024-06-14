@@ -13,6 +13,7 @@ import Navbar from "./components/Navbar";
 import ScrollToTop from "./components/ScrollToTop";
 import "./style.css";
 import { ExportsContexts } from "./Contexts/exportsContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const About = lazy(() => import("./pages/About/About"));
 const Home = lazy(() => import("./pages/Home/Home"));
@@ -34,65 +35,68 @@ function App() {
 
   return (
     <ExportsContexts>
-    <Router>
-      <Preloader load={load} />
-      <div className="App" id={load ? "no-scroll" : "scroll"}>
-        <Navbar />
-        <ScrollToTop />
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <Suspense fallback={<Preloader load={true} />}>
-                <Home />
-              </Suspense>
-            }
-          />
-          <Route
-            path="/project"
-            element={
-              <Suspense fallback={<Preloader load={true} />}>
-                <Projects />
-              </Suspense>
-            }
-          />
-          <Route
-            path="/about"
-            element={
-              <Suspense fallback={<Preloader load={true} />}>
-                <About />
-              </Suspense>
-            }
-          />
-          <Route
-            path="/resume"
-            element={
-              <Suspense fallback={<Preloader load={true} />}>
-                <Resume />
-              </Suspense>
-            }
-          />
-          <Route
-            path="/dashboard"
-            element={
-              <Suspense fallback={<Preloader load={true} />}>
-                <DashBoard />
-              </Suspense>
-            }
-          />
-          <Route
-            path="/login"
-            element={
-              <Suspense fallback={<Preloader load={true} />}>
-                <Login />
-              </Suspense>
-            }
-          />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-        <Footer />
-      </div>
-    </Router>
+      <Router>
+        <Preloader load={load} />
+        <div className="App" id={load ? "no-scroll" : "scroll"}>
+          <Navbar />
+          <ScrollToTop />
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <Suspense fallback={<Preloader load={true} />}>
+                  <Home />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/project"
+              element={
+                <Suspense fallback={<Preloader load={true} />}>
+                  <Projects />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/about"
+              element={
+                <Suspense fallback={<Preloader load={true} />}>
+                  <About />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/resume"
+              element={
+                <Suspense fallback={<Preloader load={true} />}>
+                  <Resume />
+                </Suspense>
+              }
+            />
+
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Suspense fallback={<Preloader load={true} />}>
+                    <DashBoard />
+                  </Suspense>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <Suspense fallback={<Preloader load={true} />}>
+                  <Login />
+                </Suspense>
+              }
+            />
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+          <Footer />
+        </div>
+      </Router>
     </ExportsContexts>
   );
 }
