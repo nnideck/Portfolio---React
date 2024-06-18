@@ -11,7 +11,7 @@ interface IHomeProps {}
 
 // eslint-disable-next-line no-empty-pattern
 function Home({}: IHomeProps) {
-  const { greeting, presentation, name, loadValues } = usePortfolioContext();
+  const { greeting, presentation, name, jobsArray, loadValues } = usePortfolioContext();
 
   useEffect(() => {
     loadValues();
@@ -37,7 +37,7 @@ function Home({}: IHomeProps) {
               </h1>
 
               <div style={{ padding: 50, textAlign: "left" }}>
-                <Type />
+                <Type value = {jobsArray}/>
               </div>
             </Col>
 

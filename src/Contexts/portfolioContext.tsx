@@ -6,6 +6,8 @@ interface IExportsContext {
   greeting: string;
   presentation: string;
   name: string;
+  jobsArray: string[];
+  jobsString: string;
   saving: boolean;
   loadValues: () => Promise<void>;
   saveValues: (data: IFormValues) => Promise<void>;
@@ -15,12 +17,15 @@ interface IFormValues {
   greeting: string;
   presentation: string;
   name: string;
+  jobsString: string;
 }
 
 const initialValue: IExportsContext = {
   greeting: "",
   presentation: "",
   name: "",
+  jobsArray: [],
+  jobsString: "",
   saving: false,
   loadValues: () => Promise.resolve(),
   saveValues: () => Promise.resolve(),
@@ -33,6 +38,8 @@ const PortfolioProvider = ({ children }: any) => {
   const [greeting, setGreeting] = useState("");
   const [presentation, setPresentation] = useState("");
   const [name, setName] = useState("");
+  const [jobsArray, setJobsArray] = useState([]);
+  const [jobsString, setJobsString] = useState("");
   const [saving, setSaving] = useState(false);
 
   const loadValues = async () => {
@@ -42,6 +49,11 @@ const PortfolioProvider = ({ children }: any) => {
       setGreeting(docSnap.data()!.greeting);
       setPresentation(docSnap.data()!.presentation);
       setName(docSnap.data()!.name);
+      const loadedJobs = (docSnap.data()!.jobs);
+      const stringJobs = loadedJobs.join("\n");
+      setJobsArray (loadedJobs);
+      setJobsString(stringJobs);
+      console.log(stringJobs);
     }
   };
   const saveValues = async (data: IFormValues) => {
@@ -51,6 +63,7 @@ const PortfolioProvider = ({ children }: any) => {
         greeting: data.greeting,
         presentation: data.presentation,
         name: data.name,
+        jobs: data.jobsString. split("\n"),
       });
       setSaving(false);
     }
@@ -58,7 +71,7 @@ const PortfolioProvider = ({ children }: any) => {
 
   return (
     <PortfolioContext.Provider
-      value={{ greeting, presentation, name, saving, loadValues, saveValues }}
+      value={{ greeting, presentation, name, saving, jobsArray, jobsString, loadValues, saveValues }}
     >
       {children}
     </PortfolioContext.Provider>

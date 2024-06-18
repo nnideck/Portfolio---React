@@ -1,21 +1,23 @@
 import Typewriter from "typewriter-effect";
 
-function Type() {
+interface IinitialValues {
+  value: string[];
+}
+
+function Type( value: IinitialValues) {
+  if (!value){
+    return ("")
+  } else {
   return (
-    <Typewriter
+     <Typewriter
       options={{
-        strings: [
-          "Software Developer",
-          "Freelancer",
-          "MERN Stack Developer",
-          "Open Source Contributor",
-        ],
+        strings: value.value,
         autoStart: true,
         loop: true,
         deleteSpeed: 50,
       }}
-    />
-  );
+    /> 
+  );}
 }
 
 export default Type;

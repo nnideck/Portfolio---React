@@ -9,6 +9,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 interface IAuthContext {
   auth: any;
   user: any;
+  error: any;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -16,6 +17,7 @@ interface IAuthContext {
 const initialValue: IAuthContext = {
   auth: null,
   user: null,
+  error: null,
   login: () => Promise.resolve(),
   logout: () => Promise.resolve(),
 };
@@ -25,6 +27,7 @@ const AuthContext = createContext(initialValue);
 const AuthProvider = ({ children }: any) => {
   const [auth, setAuth] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
+  const [error, setError] = useState<any>(null);
 
   useEffect(() => {
     const _auth = getAuth();
@@ -44,10 +47,11 @@ const AuthProvider = ({ children }: any) => {
       .then((userCredential) => {
         setUser(userCredential.user);
       })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
+      .catch((_error) => {
+        const errorCode = _error.code;
+        const errorMessage = _error.message;
         console.log("errorCode", errorCode, "errorMessage", errorMessage);
+        setError(errorMessage);
       });
   };
 
@@ -56,7 +60,7 @@ const AuthProvider = ({ children }: any) => {
   };
 
   return (
-    <AuthContext.Provider value={{ auth, user, login, logout }}>
+    <AuthContext.Provider value={{ auth, user, error, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

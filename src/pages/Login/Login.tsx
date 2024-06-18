@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Container, Form, Button, Row, Col} from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../Contexts/authContext";
+import ErrorAlert from "../../components/ErrorAlert";
 
 
 const Login = () => {
@@ -10,7 +11,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const {user, login} = useAuthContext();
+  const {user, error, login} = useAuthContext();
 
   useEffect(() => {
     if (user) {
@@ -70,6 +71,7 @@ const Login = () => {
               <Button variant="primary" type="submit" disabled={loading}>
                 Login
               </Button>
+             <ErrorAlert errorMessage={error}/>
               <br />
               <br />
             </Form>

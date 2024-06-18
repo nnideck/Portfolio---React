@@ -1,4 +1,3 @@
-
 import { Navigate } from "react-router-dom";
 import { useAuthContext } from "../Contexts/authContext";
 
@@ -7,10 +6,10 @@ interface IProtectedRouteProps {
 }
 
 const ProtectedRoute = ({children}: IProtectedRouteProps) => {
-  const { user } = useAuthContext();
+   const { user } = useAuthContext();
   if (!user) {
     return <Navigate to="/login" />
-  }
+  } 
   return children;
 }
 

@@ -5,19 +5,18 @@ import Sidebar from "../../../components/Sidebar";
 import { useForm } from "../../../Utils/Hooks/useForm";
 import { usePortfolioContext } from "../../../Contexts/portfolioContext";
 import { useAuthContext } from "../../../Contexts/authContext";
-import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [validated, setValidated] = useState(false);
-  const { greeting, presentation, name, saving, loadValues, saveValues } =
+  const { greeting, presentation, name, saving, jobsString, loadValues, saveValues } =
     usePortfolioContext();
-  const { logout, user } = useAuthContext();
-  const navigate = useNavigate();
-
+  const { logout,  } = useAuthContext();
+  
   const [form, setForm, updateForm] = useForm({
     greeting,
     presentation,
     name,
+    jobsString,
   });
 
   useEffect(() => {
@@ -26,18 +25,13 @@ const Dashboard = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (!user) {
-        navigate("/login");
-      }
-    });
-   [user];
 
   useEffect(() => {
     updateForm({
       greeting,
       presentation,
       name,
+      jobsString,
     });
   }, [greeting]);
 
@@ -48,9 +42,10 @@ const Dashboard = () => {
       e.preventDefault();
       e.stopPropagation();
     } else {
-      console.log("enviou");
       await saveValues(form);
       setValidated(false);
+      loadValues();
+      console.log(form)
     }
     setValidated(true);
   };
@@ -111,6 +106,18 @@ const Dashboard = () => {
                 onChange={setForm}
                 required
                 disabled={saving}
+              />
+            </Form.Group>
+            <br />
+            <Form.Group controlId="formJobs">
+              <Form.Label className="jobs_label">Jobs</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows = {3}
+                placeholder="Enter a job or function"
+                name="jobsString"
+                value={form.jobsString}
+                onChange={setForm}
               />
             </Form.Group>
             <br />
