@@ -1,39 +1,42 @@
-
 import { useEffect, useState } from "react";
-import { Container, Form, Button, Row, Col} from "react-bootstrap";
+import { Container, Form, Button, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../Contexts/authContext";
 import ErrorAlert from "../../components/ErrorAlert";
-
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const {user, error, login} = useAuthContext();
+  const { user, error, login } = useAuthContext();
+
+  console.log("cadê", error);
 
   useEffect(() => {
     if (user) {
-        navigate("/dashboard");
-      }
-    });
-   [user];
-
+      navigate("/dashboard");
+    }
+  }),
+    [user];
 
   const handleLogin = async (e: any) => {
     e.preventDefault();
     setLoading(true);
-    console.log(`Email: ${email}, Password: ${password}`);
-    await login(email, password)
-    setLoading(false);
-    };
+    setTimeout(async () => {
+      console.log(`Email: ${email}, Password: ${password}`, loading);
+      await login(email, password);
+      setLoading(false);
+    }, 2000);
+    setEmail("");
+    setPassword("");
+  };
 
   return (
     <Container>
       <Container className="login-content">
         <Row className="justify-content-md-center">
-          <Col md={7} className="login-col">
+          <Col md={5} className="login-col">
             <br />
             <br />
             <br />
@@ -50,7 +53,6 @@ const Login = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-
                   disabled={loading}
                 />
               </Form.Group>
@@ -71,7 +73,7 @@ const Login = () => {
               <Button variant="primary" type="submit" disabled={loading}>
                 Login
               </Button>
-             <ErrorAlert errorMessage={error}/>
+              <ErrorAlert errorMessage={error} />
               <br />
               <br />
             </Form>

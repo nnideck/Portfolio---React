@@ -48,15 +48,16 @@ const AuthProvider = ({ children }: any) => {
         setUser(userCredential.user);
       })
       .catch((_error) => {
-        const errorCode = _error.code;
+        if (_error) {const errorCode = _error.code;
         const errorMessage = _error.message;
         console.log("errorCode", errorCode, "errorMessage", errorMessage);
-        setError(errorMessage);
+        setError(errorMessage);} 
       });
   };
 
   const logout = async () => {
     await signOut(auth);
+    setError(null);
   };
 
   return (

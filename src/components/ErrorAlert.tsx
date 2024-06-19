@@ -6,7 +6,9 @@ const ErrorAlert = (error: any) => {
           <Alert> 
             Incorrect email or password.
           </Alert>
-        )} 
+        )} else {
+          return []
+        }
  } 
 
 export default ErrorAlert;

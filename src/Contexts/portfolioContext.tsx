@@ -1,5 +1,5 @@
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { createContext, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useState } from "react";
 import { useFirebaseContext } from "./firebaseContext";
 
 interface IExportsContext {
@@ -42,7 +42,7 @@ const PortfolioProvider = ({ children }: any) => {
   const [jobsString, setJobsString] = useState("");
   const [saving, setSaving] = useState(false);
 
-  const loadValues = async () => {
+  const loadValues = useCallback( async () => {
     if (db) {
       const docRef = doc(db!, "portfolio", "home");
       const docSnap = await getDoc(docRef);
@@ -53,21 +53,24 @@ const PortfolioProvider = ({ children }: any) => {
       const stringJobs = loadedJobs.join("\n");
       setJobsArray (loadedJobs);
       setJobsString(stringJobs);
-      console.log(stringJobs);
-    }
-  };
-  const saveValues = async (data: IFormValues) => {
+    }}
+  ,[db, setGreeting, setPresentation, setName, setJobsArray, setJobsString]); 
+   
+  const saveValues = useCallback(
+    async(data: IFormValues) => { 
     if (!saving) {
       setSaving(true);
       await setDoc(doc(db!, "portfolio", "home"), {
         greeting: data.greeting,
         presentation: data.presentation,
         name: data.name,
-        jobs: data.jobsString. split("\n"),
+        jobs: data.jobsString.split("\n"),
       });
       setSaving(false);
     }
-  };
+  }, 
+  [saving, setSaving, db]);
+  
 
   return (
     <PortfolioContext.Provider
