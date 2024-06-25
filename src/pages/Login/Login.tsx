@@ -11,8 +11,6 @@ const Login = () => {
   const navigate = useNavigate();
   const { user, error, login } = useAuthContext();
 
-  console.log("cadê", error);
-
   useEffect(() => {
     if (user) {
       navigate("/dashboard");
@@ -35,8 +33,8 @@ const Login = () => {
   return (
     <Container>
       <Container className="login-content">
-        <Row className="justify-content-md-center">
-          <Col md={5} className="login-col">
+        <Row className="justify-content-md-center"> 
+          <Col md={4} className="login-col">
             <br />
             <br />
             <br />

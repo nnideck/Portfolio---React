@@ -46,6 +46,7 @@ const AuthProvider = ({ children }: any) => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         setUser(userCredential.user);
+        setError(null);
       })
       .catch((_error) => {
         if (_error) {const errorCode = _error.code;
@@ -59,7 +60,7 @@ const AuthProvider = ({ children }: any) => {
     await signOut(auth);
     setError(null);
   };
-
+  
   return (
     <AuthContext.Provider value={{ auth, user, error, login, logout }}>
       {children}

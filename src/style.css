@@ -759,3 +759,13 @@ button:focus {
     color: #a588c0;
   }
 }
+
+.admin-menu-btn {
+  margin-top: 80px;
+  width: auto;
+  height: 40px;
+}
+
+.adm-label {
+    color: #ffff
+}

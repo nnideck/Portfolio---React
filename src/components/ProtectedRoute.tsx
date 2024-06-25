@@ -9,7 +9,7 @@ const ProtectedRoute = ({children}: IProtectedRouteProps) => {
    const { user } = useAuthContext();
   if (!user) {
     return <Navigate to="/login" />
-  } 
+  }  
   return children;
 }
 

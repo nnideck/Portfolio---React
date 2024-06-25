@@ -21,6 +21,7 @@ const Projects = lazy(() => import("./pages/Projects/Projects"));
 const Resume = lazy(() => import("./pages/Resume/ResumeNew"));
 const DashBoard = lazy(() => import("./pages/Admin/Dashboard/Dashboard"));
 const Login = lazy(() => import("./pages/Login/Login"));
+const AdminProjects = lazy(() => import("./pages/Admin/Projects/Admin-projects"));
 
 function App() {
   const [load, upadateLoad] = useState(true);
@@ -80,6 +81,16 @@ function App() {
                 <ProtectedRoute>
                   <Suspense fallback={<Preloader load={true} />}>
                     <DashBoard />
+                  </Suspense>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin-projects"
+              element={
+                <ProtectedRoute>
+                  <Suspense fallback={<Preloader load={true} />}>
+                    <AdminProjects />
                   </Suspense>
                 </ProtectedRoute>
               }
