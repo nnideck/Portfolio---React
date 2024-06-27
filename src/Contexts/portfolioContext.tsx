@@ -44,7 +44,7 @@ const PortfolioProvider = ({ children }: any) => {
 
   const loadValues = useCallback( async () => {
     if (db) {
-      const docRef = doc(db!, "portfolio", "home");
+      const docRef = doc(db!, "home", "homeData");
       const docSnap = await getDoc(docRef);
       setGreeting(docSnap.data()!.greeting);
       setPresentation(docSnap.data()!.presentation);
@@ -60,7 +60,7 @@ const PortfolioProvider = ({ children }: any) => {
     async(data: IFormValues) => { 
     if (!saving) {
       setSaving(true);
-      await setDoc(doc(db!, "portfolio", "home"), {
+      await setDoc(doc(db!, "home", "homeData"), {
         greeting: data.greeting,
         presentation: data.presentation,
         name: data.name,

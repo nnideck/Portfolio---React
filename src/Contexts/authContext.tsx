@@ -10,16 +10,18 @@ interface IAuthContext {
   auth: any;
   user: any;
   error: any;
+  loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
+  logout: () => void;
 }
 
 const initialValue: IAuthContext = {
   auth: null,
   user: null,
   error: null,
+  loading: true,
   login: () => Promise.resolve(),
-  logout: () => Promise.resolve(),
+  logout: () => null,
 };
 
 const AuthContext = createContext(initialValue);
@@ -28,18 +30,23 @@ const AuthProvider = ({ children }: any) => {
   const [auth, setAuth] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
   const [error, setError] = useState<any>(null);
+  const [loading, setLoading] = useState<any>(true);
 
   useEffect(() => {
     const _auth = getAuth();
     setAuth(_auth);
 
-    onAuthStateChanged(_auth, (user) => {
+    const unsubscribe = onAuthStateChanged(_auth, (user) => {
       if (user) {
         setUser(user);
       } else {
         setUser(null);
       }
+      setLoading(false)
     });
+    return () => {
+      unsubscribe();
+    }
   }, []);
 
   const login = async (email: string, password: string) => {
@@ -56,13 +63,13 @@ const AuthProvider = ({ children }: any) => {
       });
   };
 
-  const logout = async () => {
-    await signOut(auth);
-    setError(null);
+  const logout = () => {
+    setTimeout(() => { signOut(auth);}, 2000);
+    setError(null)
   };
   
   return (
-    <AuthContext.Provider value={{ auth, user, error, login, logout }}>
+    <AuthContext.Provider value={{ auth, user, error, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
