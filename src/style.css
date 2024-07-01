@@ -769,3 +769,31 @@ button:focus {
 .adm-label {
     color: #ffff
 }
+
+.projects_table {
+  margin-top: 25px;
+  margin-bottom: 35px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 75%;
+  td, th {
+    border-style:none;
+   }
+  tr {
+    border-style:none;
+    border-radius: 10px;
+  }
+  .longtextTd{
+    white-space: nowrap;
+    max-Width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .shorttextTd {
+    max-Width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  }
+

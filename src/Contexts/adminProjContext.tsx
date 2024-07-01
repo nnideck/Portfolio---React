@@ -1,14 +1,16 @@
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, getDocs } from "firebase/firestore";
 import { createContext, useCallback, useContext, useState } from "react";
 import { useFirebaseContext } from "./firebaseContext";
 
 interface IExportsContext {
   saving: boolean;
-  //loadValues: () => Promise<void>;
+  getListProjects: () => Promise<void>;
   saveProject: (data: IFormProjects) => Promise<void>;
+  projectsList: IFormProjects[];
 }
 
 interface IFormProjects {
+  id?: string;
   title: string;
   description: string;
   github: string;
@@ -17,32 +19,39 @@ interface IFormProjects {
 
 const initialValue: IExportsContext = {
   saving: false,
-  //loadValues: () => Promise.resolve(),
+  getListProjects: () => Promise.resolve(),
   saveProject: () => Promise.resolve(),
+  projectsList: [],
 };
 
 const AdminProjContext = createContext(initialValue);
 
 const AdminProjProvider = ({ children }: any) => {
   const [saving, setSaving] = useState(false);
-  //const [title, setTitle] = useState("");
-  //const [description, setDescription] = useState("");
-  //const [github, setgithub] = useState("");
-  //const [demo, setDemo] = useState("");
+  const [projectsList, setProjectsList] = useState<IFormProjects[]>([]);
+  /*   const [id, setId] = useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [github, setGithub] = useState("");
+  const [demo, setDemo] = useState(""); */
   const { db } = useFirebaseContext();
 
-  /*   const loadValues = useCallback(async () => {
+  const getListProjects = useCallback(async () => {
     if (db) {
-      const docRef = doc(db!, "portfolio", "projects");
-      const docSnap = await getDoc(docRef);
-      console.log(docSnap);
-      setTitle(docSnap.data()!.title);
-      setDescription(docSnap.data()!.description);
-      setgitHub(docSnap.data()!.github);
-      setDemo(docSnap.data()!.demo);
-      setSaving(false);
+      const querySnapshot = await getDocs(collection(db, "projects"));
+      const listprojects: IFormProjects[] = [];
+      querySnapshot.forEach((doc) => {
+        listprojects.push({
+          id: doc.id,
+          title: doc.data().title,
+          description: doc.data().description,
+          github: doc.data().github,
+          demo: doc.data().demo,
+        });
+        setProjectsList(listprojects);
+      });
     }
-  }, [db]); */
+  }, [db]);
 
   const saveProject = useCallback(
     async (data: IFormProjects) => {
@@ -64,7 +73,7 @@ const AdminProjProvider = ({ children }: any) => {
 
   return (
     <AdminProjContext.Provider
-      value={{ saveProject, saving }}
+      value={{ saveProject, saving, getListProjects, projectsList }}
     >
       {children}
     </AdminProjContext.Provider>
