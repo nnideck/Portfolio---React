@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button, Nav, Offcanvas } from "react-bootstrap";
 import { useAuthContext } from "../Contexts/authContext";
+import { MdMenu } from "react-icons/md";
 
 
 const Sidebar = () => {
@@ -13,7 +14,8 @@ const Sidebar = () => {
   return (
     <>
       <Button className="admin-menu-btn" variant="primary" onClick={handleShow}>
-        Menu
+      <MdMenu />
+      Menu
       </Button>
       <Offcanvas show={show} onHide={handleClose}>
         <Offcanvas.Header closeButton>

@@ -1,38 +1,64 @@
-import { useState } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
-import { useAdminProjContext } from "../../../Contexts/adminProjContext";
+import {
+  IFormProjects,
+  useAdminProjContext,
+} from "../../../Contexts/adminProjContext";
 
-const ModalAdminProjects = () => {
-  const { saving, saveProject, getListProjects } = useAdminProjContext();
+const ModalAdminProjects = forwardRef((_, ref) => {
+  const { saving, saveProject, getListProjects, updateProject } =
+    useAdminProjContext();
   const [show, setShow] = useState(false);
   const handleShow = () => setShow(true);
-
+  const [id, setId] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [github, setGithub] = useState("");
   const [demo, setDemo] = useState("");
 
+  useImperativeHandle(ref, () => {
+    return { handleOpenAndFillModal };
+  });
+
   function clearForm() {
     setTitle(""), setDescription(""), setGithub(""), setDemo("");
+    setId("");
+  }
+
+  function handleOpenAndFillModal(project: IFormProjects) {
+      setId(project.id!);
+      setTitle(project.title);
+      setDescription(project.description);
+      setGithub(project.github);
+      setDemo(project.demo);
+      handleShow();
   }
 
   const handleClose = () => {
     clearForm();
     setShow(false);
   };
-
   const handleSubmit = async (e: any) => {
+    console.log(id);
     e.preventDefault();
-    await saveProject({
-      title,
-      description,
-      github,
-      demo,
-    });
+    if (id) {
+      await updateProject(id, {
+        title,
+        description,
+        github,
+        demo,
+      });
+    } else {
+      await saveProject({
+        title,
+        description,
+        github,
+        demo,
+      });
+    }
     handleClose();
     getListProjects();
   };
-
   return (
     <>
       <Button variant="primary" onClick={handleShow}>
@@ -95,7 +121,7 @@ const ModalAdminProjects = () => {
               />
             </Form.Group>
             <br />
-{/*             <Form.Group controlId="formImage" className="image_label">
+            {/*<Form.Group controlId="formImage" className="image_label">
               <Form.Label>Image</Form.Label>
               <Form.Control type="file" />
             </Form.Group> */}
@@ -112,6 +138,6 @@ const ModalAdminProjects = () => {
       </Modal>
     </>
   );
-};
+});
 
 export default ModalAdminProjects;

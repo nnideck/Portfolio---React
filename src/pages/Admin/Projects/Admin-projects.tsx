@@ -1,20 +1,36 @@
-import { Col, Container, Row, Table } from "react-bootstrap";
+import { Button, Col, Container, Row, Table } from "react-bootstrap";
 import Sidebar from "../../../components/Sidebar";
 import ModalAdminProjects from "./ModalAdmin-projects";
-import { useAdminProjContext } from "../../../Contexts/adminProjContext";
-import { useEffect } from "react";
+import { IFormProjects, useAdminProjContext } from "../../../Contexts/adminProjContext";
+import { useEffect, useRef } from "react";
+import { MdDeleteForever, MdEdit } from "react-icons/md";
 
 const AdminProjects = () => {
-  const { getListProjects, projectsList } = useAdminProjContext();
+  const { getListProjects, projectsList, deleteProject } = useAdminProjContext();
+
+  const modalRef = useRef(null);
+
+/*   interface ModalAdminProjectsRef {
+    handleOpenAndFillModal: (project: IFormProjects) => void;
+  } */
 
   useEffect(() => {
     getListProjects();
-  }, []);
-
-  useEffect(() => {
-console.log(projectsList);
-
   }, [projectsList]);
+
+  function openModal(project: IFormProjects){
+    if(modalRef.current){
+    //@ts-expect-error (seems like there is no function above)
+      modalRef.current.handleOpenAndFillModal(project)
+    }
+  console.log(project);}
+
+  function deleteProj(project:IFormProjects){
+    if (project.id){
+      deleteProject(project.id)
+    }
+    
+  }
 
   return (
     <Container>
@@ -26,7 +42,7 @@ console.log(projectsList);
             <Sidebar />
             <br />
             <br />
-            <ModalAdminProjects />
+            <ModalAdminProjects ref={modalRef} />
             <Table striped bordered hover variant="dark" className="projects_table">
       <thead>
         <tr>
@@ -34,15 +50,24 @@ console.log(projectsList);
           <th>Description</th>
           <th>GitHub URL</th>
           <th>DemoURL</th>
+          <th>Options</th>
         </tr>
       </thead>
       <tbody>
-         {projectsList.map((p: any) => (
+          {projectsList.map((p: any) => (
           <tr key={p.id}>
           <td className="shorttextTd">{p.title}</td>
           <td className="longtextTd">{p.description}</td>
           <td className="longtextTd">{p.github}</td>
           <td className="longtextTd">{p.demo}</td>
+          <td className="longtextTd">
+            <Button variant="outline-success" title="Edit" className="td_projects_btn" onClick={() => {openModal(p)}}>
+            <MdEdit />
+            </Button>
+            <Button variant="outline-danger" title="Delete" className="td_projects_btn" onClick={() => {deleteProj(p)}}>
+            <MdDeleteForever />
+            </Button>
+          </td>
         </tr>
         ))}
       </tbody>

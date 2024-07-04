@@ -778,7 +778,7 @@ button:focus {
   width: 75%;
   td, th {
     border-style:none;
-   }
+  }
   tr {
     border-style:none;
     border-radius: 10px;
@@ -795,5 +795,11 @@ button:focus {
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  .td_projects_btn {
+    border: none;
+    margin-right: 2px;
   }
+
+  }
+
 
