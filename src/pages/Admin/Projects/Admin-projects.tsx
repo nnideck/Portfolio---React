@@ -1,6 +1,7 @@
 import { Button, Col, Container, Row, Table } from "react-bootstrap";
 import Sidebar from "../../../components/Sidebar";
 import ModalAdminProjects from "./ModalAdmin-projects";
+import ModalDelete from "../../../components/ModalDelete";
 import { IFormProjects, useAdminProjContext } from "../../../Contexts/adminProjContext";
 import { useEffect, useRef } from "react";
 import { MdDeleteForever, MdEdit } from "react-icons/md";
@@ -9,6 +10,7 @@ const AdminProjects = () => {
   const { getListProjects, projectsList, deleteProject } = useAdminProjContext();
 
   const modalRef = useRef(null);
+  const deleteModal = useRef(null);
 
 /*   interface ModalAdminProjectsRef {
     handleOpenAndFillModal: (project: IFormProjects) => void;
@@ -24,12 +26,14 @@ const AdminProjects = () => {
       modalRef.current.handleOpenAndFillModal(project)
     }
   console.log(project);}
+  
 
-  function deleteProj(project:IFormProjects){
-    if (project.id){
-      deleteProject(project.id)
+  function openDeleteModal(project:IFormProjects){
+    console.log("aqui foi", project);
+    if(deleteModal.current){
+      //@ts-expect-error (seems like there is no function above)
+      deleteModal.current.FillTitleDeleteModal(project)
     }
-    
   }
 
   return (
@@ -64,9 +68,10 @@ const AdminProjects = () => {
             <Button variant="outline-success" title="Edit" className="td_projects_btn" onClick={() => {openModal(p)}}>
             <MdEdit />
             </Button>
-            <Button variant="outline-danger" title="Delete" className="td_projects_btn" onClick={() => {deleteProj(p)}}>
+            <Button variant="outline-danger" title="Delete" className="td_projects_btn" onClick={() => {openDeleteModal(p)}}>
             <MdDeleteForever />
             </Button>
+            <ModalDelete ref={deleteModal} />
           </td>
         </tr>
         ))}
