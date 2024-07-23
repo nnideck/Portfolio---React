@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import {
   IFormProjects,
@@ -15,6 +15,7 @@ const ModalAdminProjects = forwardRef((_, ref) => {
   const [description, setDescription] = useState("");
   const [github, setGithub] = useState("");
   const [demo, setDemo] = useState("");
+  const [image, setImage] = useState<File | any>(null);
 
   useImperativeHandle(ref, () => {
     return { handleOpenAndFillModal };
@@ -22,7 +23,7 @@ const ModalAdminProjects = forwardRef((_, ref) => {
 
   function clearForm() {
     setTitle(""), setDescription(""), setGithub(""), setDemo("");
-    setId("");
+    setId(""); setImage("");
   }
 
   function handleOpenAndFillModal(project: IFormProjects) {
@@ -47,18 +48,23 @@ const ModalAdminProjects = forwardRef((_, ref) => {
         description,
         github,
         demo,
-      });
+      }, image);
     } else {
       await saveProject({
         title,
         description,
         github,
         demo,
-      });
+      }, image);
     }
     handleClose();
     getListProjects();
   };
+
+  useEffect(() => {
+    console.log(image);
+  }, [image]);
+
   return (
     <>
       <Button variant="primary" onClick={handleShow}>
@@ -121,10 +127,12 @@ const ModalAdminProjects = forwardRef((_, ref) => {
               />
             </Form.Group>
             <br />
-            {/*<Form.Group controlId="formImage" className="image_label">
+            <Form.Group controlId="formImage" className="image_label">
               <Form.Label>Image</Form.Label>
-              <Form.Control type="file" />
-            </Form.Group> */}
+              <Form.Control type="file"
+              onChange={(e) => setImage((e.target as any).files[0])}
+              />
+            </Form.Group>
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>

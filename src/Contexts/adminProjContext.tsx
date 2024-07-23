@@ -1,12 +1,25 @@
-import { collection, addDoc, getDocs, setDoc, doc, deleteDoc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  setDoc,
+  doc,
+  deleteDoc,
+  getDoc,
+} from "firebase/firestore";
 import { createContext, useCallback, useContext, useState } from "react";
 import { useFirebaseContext } from "./firebaseContext";
+import { ref, uploadBytes, deleteObject } from "firebase/storage";
 
 interface IExportsContext {
   saving: boolean;
   getListProjects: () => Promise<void>;
-  saveProject: (data: IFormProjects) => Promise<void>;
-  updateProject: (id: string, data: IFormProjects) => Promise<void>;
+  saveProject: (data: IFormProjects, image: File) => Promise<void>;
+  updateProject: (
+    id: string,
+    data: IFormProjects,
+    image: File
+  ) => Promise<void>;
   deleteProject: (id: string) => Promise<void>;
   projectsList: IFormProjects[];
 }
@@ -33,7 +46,7 @@ const AdminProjContext = createContext(initialValue);
 const AdminProjProvider = ({ children }: any) => {
   const [saving, setSaving] = useState(false);
   const [projectsList, setProjectsList] = useState<IFormProjects[]>([]);
-  const { db } = useFirebaseContext();
+  const { db, storage } = useFirebaseContext();
 
   const getListProjects = useCallback(async () => {
     if (db) {
@@ -53,16 +66,26 @@ const AdminProjProvider = ({ children }: any) => {
   }, [db]);
 
   const saveProject = useCallback(
-    async (data: IFormProjects) => {
+    async (data: IFormProjects, image: File) => {
       if (db) {
         if (!saving) {
           setSaving(true);
-          await addDoc(collection(db, "projects"), {
+          const docRef = await addDoc(collection(db, "projects"), {
             title: data.title,
             description: data.description,
             github: data.github,
             demo: data.demo,
           });
+          if (image) {const ext = image.name.split(".").pop();
+          const imageName = `Projects/${docRef.id}.${ext}`;
+          const imageRef = ref(storage!, imageName);
+          uploadBytes(imageRef, image);
+          await setDoc(
+            doc(db!, "projects", docRef.id),
+            { image: imageName },
+            { merge: true }
+          );}
+          
           setSaving(false);
         }
       }
@@ -71,17 +94,31 @@ const AdminProjProvider = ({ children }: any) => {
   );
 
   const updateProject = useCallback(
-    async (id: string, data: IFormProjects) => {
+    async (id: string, data: IFormProjects, image: File) => {
       if (db) {
         if (!saving) {
           setSaving(true);
           if (id) {
+            const docRef = await getDoc(doc(db!, "projects", id));
             await setDoc(doc(db, "projects", id), {
               title: data.title,
               description: data.description,
               github: data.github,
               demo: data.demo,
-            });
+            },{ merge: true });
+            if (image) {
+              if (docRef.data()!.image) {
+                const oldImage = ref(storage!, docRef.data()!.image);
+                await deleteObject(oldImage);
+              }
+              const ext = image.name.split(".").pop();
+              const imageName = `Projects/${id}.${ext}`
+              const imageRef = ref(storage!, imageName);
+              uploadBytes(imageRef, image);
+              await setDoc(doc(db, "projects", id), {
+                image: imageName
+              }, { merge: true });
+            }
             setSaving(false);
           }
         }
@@ -93,9 +130,15 @@ const AdminProjProvider = ({ children }: any) => {
   const deleteProject = useCallback(
     async (id: string) => {
       if (db) {
-          if (id) {
-            await deleteDoc(doc(db, "projects", id))
-          }
+        if (id) {
+          const docRef = await getDoc(doc(db!, "projects", id));
+            if (docRef.data()!.image) {
+              const image = ref(storage!, docRef.data()!.image);
+              console.log(image)
+              await deleteObject(image);
+            }
+          await deleteDoc(doc(db, "projects", id));
+        }
       }
     },
     [db]
@@ -103,7 +146,14 @@ const AdminProjProvider = ({ children }: any) => {
 
   return (
     <AdminProjContext.Provider
-      value={{ saveProject, saving, getListProjects, projectsList, updateProject, deleteProject }}
+      value={{
+        saveProject,
+        saving,
+        getListProjects,
+        projectsList,
+        updateProject,
+        deleteProject,
+      }}
     >
       {children}
     </AdminProjContext.Provider>
