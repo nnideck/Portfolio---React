@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import {
   IFormProjects,
@@ -40,7 +40,6 @@ const ModalAdminProjects = forwardRef((_, ref) => {
     setShow(false);
   };
   const handleSubmit = async (e: any) => {
-    console.log(id);
     e.preventDefault();
     if (id) {
       await updateProject(id, {
@@ -60,10 +59,6 @@ const ModalAdminProjects = forwardRef((_, ref) => {
     handleClose();
     getListProjects();
   };
-
-  useEffect(() => {
-    console.log(image);
-  }, [image]);
 
   return (
     <>

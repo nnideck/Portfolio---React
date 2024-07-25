@@ -21,6 +21,7 @@ interface IExportsContext {
     image: File
   ) => Promise<void>;
   deleteProject: (id: string) => Promise<void>;
+  getFullPathImage: (imagePath:string) => string;
   projectsList: IFormProjects[];
 }
 
@@ -30,6 +31,7 @@ export interface IFormProjects {
   description: string;
   github: string;
   demo: string;
+  image?: string;
 }
 
 const initialValue: IExportsContext = {
@@ -38,6 +40,7 @@ const initialValue: IExportsContext = {
   saveProject: () => Promise.resolve(),
   updateProject: () => Promise.resolve(),
   deleteProject: () => Promise.resolve(),
+  getFullPathImage: () => (""),
   projectsList: [],
 };
 
@@ -59,11 +62,18 @@ const AdminProjProvider = ({ children }: any) => {
           description: doc.data().description,
           github: doc.data().github,
           demo: doc.data().demo,
+          image: doc.data().image,
         });
         setProjectsList(listprojects);
       });
     }
   }, [db]);
+
+  const getFullPathImage = (imagePath: string) => {
+    const _imagePath = imagePath.replace("/", "%2F");
+    return `https://firebasestorage.googleapis.com/v0/b/portfolio-72aea.appspot.com/o/${_imagePath}?alt=media`
+  }
+
 
   const saveProject = useCallback(
     async (data: IFormProjects, image: File) => {
@@ -84,7 +94,8 @@ const AdminProjProvider = ({ children }: any) => {
             doc(db!, "projects", docRef.id),
             { image: imageName },
             { merge: true }
-          );}
+          );
+        }
           
           setSaving(false);
         }
@@ -134,7 +145,6 @@ const AdminProjProvider = ({ children }: any) => {
           const docRef = await getDoc(doc(db!, "projects", id));
             if (docRef.data()!.image) {
               const image = ref(storage!, docRef.data()!.image);
-              console.log(image)
               await deleteObject(image);
             }
           await deleteDoc(doc(db, "projects", id));
@@ -153,6 +163,7 @@ const AdminProjProvider = ({ children }: any) => {
         projectsList,
         updateProject,
         deleteProject,
+        getFullPathImage
       }}
     >
       {children}

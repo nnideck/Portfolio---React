@@ -7,7 +7,7 @@ import { useEffect, useRef } from "react";
 import { MdDeleteForever, MdEdit } from "react-icons/md";
 
 const AdminProjects = () => {
-  const { getListProjects, projectsList, deleteProject } = useAdminProjContext();
+  const { getListProjects, projectsList } = useAdminProjContext();
 
   const modalRef = useRef(null);
   const deleteModal = useRef(null);

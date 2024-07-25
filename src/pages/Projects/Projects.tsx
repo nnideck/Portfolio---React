@@ -1,14 +1,24 @@
 import { Col, Container, Row } from "react-bootstrap";
-import bitsOfCode from "../../Assets/Projects/blog.png";
-import chatify from "../../Assets/Projects/chatify.png";
-import editor from "../../Assets/Projects/codeEditor.png";
-import emotion from "../../Assets/Projects/emotion.png";
-import leaf from "../../Assets/Projects/leaf.png";
-import suicide from "../../Assets/Projects/suicide.png";
+//import bitsOfCode from "../../Assets/Projects/blog.png";
+//import chatify from "../../Assets/Projects/chatify.png";
+//import editor from "../../Assets/Projects/codeEditor.png";
+//import emotion from "../../Assets/Projects/emotion.png";
+//import leaf from "../../Assets/Projects/leaf.png";
+//import suicide from "../../Assets/Projects/suicide.png";
 import ProjectCard from "./ProjectCards";
 import Particle from "../../components/Particle";
+import { useAdminProjContext } from "../../Contexts/adminProjContext";
+import { useEffect } from "react";
 
 function Projects() {
+  const { getListProjects, projectsList, getFullPathImage } = useAdminProjContext();
+
+  useEffect(() => {
+    if(projectsList.length === 0){
+      getListProjects()
+    }
+  }, []);
+
   return (
     <Container fluid className="project-section">
       <Particle />
@@ -20,18 +30,19 @@ function Projects() {
           Here are a few projects I've worked on recently.
         </p>
         <Row style={{ justifyContent: "center", paddingBottom: "10px" }}>
-          <Col md={4} className="project-card">
+        {projectsList.map((p: any) => (
+          <Col md={4} key={p.id} className="project-card">
             <ProjectCard
-              imgPath={chatify}
+              imgPath={getFullPathImage(p.image)}
               isBlog={false}
-              title="Chatify"
-              description="Personal Chat Room or Workspace to share resources and hangout with friends build with react.js, Material-UI, and Firebase. Have features which allows user for realtime messaging, image sharing as well as supports reactions on messages."
-              ghLink="https://github.com/soumyajit4419/Chatify"
-              demoLink="https://chatify-49.web.app/"
+              title={p.title}
+              description={p.description}
+              ghLink={p.github}
+              demoLink={p.demo}
             />
           </Col>
-
-          <Col md={4} className="project-card">
+        ))}
+{/*           <Col md={4} className="project-card">
             <ProjectCard
               imgPath={bitsOfCode}
               isBlog={false}
@@ -40,9 +51,9 @@ function Projects() {
               ghLink="https://github.com/soumyajit4419/Bits-0f-C0de"
               demoLink="https://blogs.soumya-jit.tech/"
             />
-          </Col>
+          </Col> */}
 
-          <Col md={4} className="project-card">
+{/*           <Col md={4} className="project-card">
             <ProjectCard
               imgPath={editor}
               isBlog={false}
@@ -51,9 +62,9 @@ function Projects() {
               ghLink="https://github.com/soumyajit4419/Editor.io"
               demoLink="https://editor.soumya-jit.tech/"
             />
-          </Col>
+          </Col> */}
 
-          <Col md={4} className="project-card">
+{/*           <Col md={4} className="project-card">
             <ProjectCard
               imgPath={leaf}
               isBlog={false}
@@ -62,9 +73,9 @@ function Projects() {
               ghLink="https://github.com/soumyajit4419/Plant_AI"
               demoLink="https://plant49-ai.herokuapp.com/"
             />
-          </Col>
+          </Col> */}
 
-          <Col md={4} className="project-card">
+{/*           <Col md={4} className="project-card">
             <ProjectCard
               imgPath={suicide}
               isBlog={false}
@@ -73,9 +84,9 @@ function Projects() {
               ghLink="https://github.com/soumyajit4419/AI_For_Social_Good"
               // demoLink="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley" <--------Please include a demo link here
             />
-          </Col>
+          </Col> */}
 
-          <Col md={4} className="project-card">
+{/*           <Col md={4} className="project-card">
             <ProjectCard
               imgPath={emotion}
               isBlog={false}
@@ -85,7 +96,7 @@ function Projects() {
               ghLink="https://github.com/soumyajit4419/Face_And_Emotion_Detection"
               // demoLink="https://blogs.soumya-jit.tech/"      <--------Please include a demo link here
             />
-          </Col>
+          </Col> */}
         </Row>
       </Container>
     </Container>
