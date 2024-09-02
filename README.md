@@ -1,3 +1,5 @@
+Site criado a partir de um template pronto (javascript) para portfólio. O trabalho consiste na configuração do template para React - criando uma página para o administrador atualir o conteúdo - e na conexão com o Firebase.
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
